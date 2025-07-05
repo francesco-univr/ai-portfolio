@@ -8,35 +8,48 @@ const NeuralParticles = () => {
   const particlesRef = useRef<THREE.Points>(null);
   const count = 2000;
   
-  const { positions, colors } = useMemo(() => {
+  const { positions, basePositions, colors } = useMemo(() => {
     const positions = new Float32Array(count * 3);
+    const basePositions = new Float32Array(count * 3);
     const colors = new Float32Array(count * 3);
     
     // Generate random positions and colors for particles
     for (let i = 0; i < count; i++) {
       const i3 = i * 3;
-      positions[i3] = (Math.random() - 0.5) * 5;
-      positions[i3 + 1] = (Math.random() - 0.5) * 5;
-      positions[i3 + 2] = (Math.random() - 0.5) * 5;
+      const x = (Math.random() - 0.5) * 5;
+      const y = (Math.random() - 0.5) * 5;
+      const z = (Math.random() - 0.5) * 5;
+
+      positions[i3] = x;
+      positions[i3 + 1] = y;
+      positions[i3 + 2] = z;
+
+      basePositions[i3] = x;
+      basePositions[i3 + 1] = y;
+      basePositions[i3 + 2] = z;
       
       colors[i3] = Math.random() * 0.3 + 0.7; // R: purple-blue
       colors[i3 + 1] = Math.random() * 0.2; // G: low
       colors[i3 + 2] = Math.random() * 0.5 + 0.5; // B: high
     }
     
-    return { positions, colors };
+    return { positions, basePositions, colors };
   }, [count]);
   
-  useFrame((state) => {
+  useFrame(({ clock }: { clock: THREE.Clock }) => {
     if (!particlesRef.current) return;
     
-    const time = state.clock.getElapsedTime() * 0.2;
+    const time = clock.getElapsedTime();
     const positions = particlesRef.current.geometry.attributes.position.array as Float32Array;
-    
+
     for (let i = 0; i < count; i++) {
       const i3 = i * 3;
-      positions[i3 + 1] += Math.sin(time + positions[i3] * 0.5) * 0.01;
-      positions[i3] += Math.cos(time + positions[i3 + 1] * 0.5) * 0.01;
+      const bx = basePositions[i3];
+      const by = basePositions[i3 + 1];
+
+      positions[i3]     = bx + Math.cos(time + bx * 2) * 0.2;
+      positions[i3 + 1] = by + Math.sin(time + by * 2) * 0.2;
+      // z remains constant for subtle depth
     }
     
     particlesRef.current.geometry.attributes.position.needsUpdate = true;
