@@ -1,11 +1,11 @@
 import React from 'react';
 import Header from './components/layout/Header';
 import Hero from './components/sections/Hero';
-import Timeline from './components/sections/Timeline';
-import Projects from './components/sections/Projects';
-import ResearchStats from './components/sections/ResearchStats';
-import NeuralNetworkVisualization from './components/sections/NeuralNetworkVisualization';
-import Contact from './components/sections/Contact';
+// import Timeline from './components/sections/Timeline';
+// import Projects from './components/sections/Projects';
+// import ResearchStats from './components/sections/ResearchStats';
+// import NeuralNetworkVisualization from './components/sections/NeuralNetworkVisualization';
+// import Contact from './components/sections/Contact';
 
 // Error boundary component
 interface ErrorBoundaryState {
@@ -59,27 +59,12 @@ function App() {
           <ErrorBoundary>
             <Hero />
           </ErrorBoundary>
-          <ErrorBoundary>
-            <Timeline />
-          </ErrorBoundary>
-          <ErrorBoundary>
-            <Projects />
-          </ErrorBoundary>
-          <ErrorBoundary>
-            <ResearchStats />
-          </ErrorBoundary>
-          <ErrorBoundary>
-            <NeuralNetworkVisualization />
-          </ErrorBoundary>
-          <ErrorBoundary>
-            <Contact />
-          </ErrorBoundary>
-        </main>
-        <footer className="py-8 text-center text-gray-400 text-sm">
-          <div className="container mx-auto">
-            <p>© {new Date().getFullYear()} AI Researcher Portfolio. Tutti i diritti riservati.</p>
+          {/* Temporarily disabled other sections to isolate the issue */}
+          <div className="py-24 text-center text-white">
+            <h2 className="text-2xl">Testing Hero section only</h2>
+            <p>If you see this text and Hero particles above, Hero component works!</p>
           </div>
-        </footer>
+        </main>
       </div>
     </ErrorBoundary>
   );
