@@ -128,6 +128,7 @@ const Hero: React.FC = () => {
           <ambientLight intensity={0.5} />
           <directionalLight position={[10, 10, 5]} intensity={1} />
           <NeuralParticles />
+          <AnimatedSphere />
           <OrbitControls 
             enableZoom={false} 
             enablePan={false} 
