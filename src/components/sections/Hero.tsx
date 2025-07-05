@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useMemo } from 'react';
+import React, { useRef, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Sphere, MeshDistortMaterial } from '@react-three/drei';
@@ -87,7 +87,7 @@ const AnimatedSphere: React.FC = () => {
   const sphereRef = useRef<THREE.Mesh>(null);
 
   // gentle rotation
-  useFrame(({ clock }) => {
+  useFrame(({ clock }: { clock: THREE.Clock }) => {
     if (sphereRef.current) {
       const t = clock.getElapsedTime();
       sphereRef.current.rotation.y = t * 0.4;
