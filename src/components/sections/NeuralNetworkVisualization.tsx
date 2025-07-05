@@ -1,6 +1,6 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, useGLTF, Environment } from '@react-three/drei';
+import { OrbitControls, Line, Environment } from '@react-three/drei';
 import { motion } from 'framer-motion';
 import * as THREE from 'three';
 
@@ -8,33 +8,40 @@ const NeuralNetworkModel = () => {
   const modelRef = useRef<THREE.Group>(null);
   
   // Simulazione di un modello di rete neurale con sfere e connessioni
-  const nodes = [];
-  const edges = [];
-  const layers = [4, 8, 8, 4]; // Struttura della rete: input, hidden, hidden, output
-  const layerDistance = 2;
-  
-  // Creazione dei nodi
-  let nodeId = 0;
-  layers.forEach((nodeCount, layerIndex) => {
-    const layerX = layerIndex * layerDistance - (layers.length - 1) * layerDistance / 2;
-    for (let i = 0; i < nodeCount; i++) {
-      const y = i * 1.2 - (nodeCount - 1) * 0.6;
-      nodes.push({ id: nodeId++, position: [layerX, y, 0] });
-    }
-  });
-  
-  // Creazione delle connessioni tra i nodi
-  let startNode = 0;
-  for (let layer = 0; layer < layers.length - 1; layer++) {
-    for (let i = 0; i < layers[layer]; i++) {
-      const sourceId = startNode + i;
-      for (let j = 0; j < layers[layer + 1]; j++) {
-        const targetId = startNode + layers[layer] + j;
-        edges.push({ source: sourceId, target: targetId });
+  type Node = { id: number; position: [number, number, number] };
+  type Edge = { source: number; target: number };
+
+  const { nodes, edges } = useMemo(() => {
+    const nodes: Node[] = [];
+    const edges: Edge[] = [];
+    const layers = [4, 8, 8, 4]; // Struttura della rete: input, hidden, hidden, output
+    const layerDistance = 2;
+    
+    // Creazione dei nodi
+    let nodeId = 0;
+    layers.forEach((nodeCount, layerIndex) => {
+      const layerX = layerIndex * layerDistance - (layers.length - 1) * layerDistance / 2;
+      for (let i = 0; i < nodeCount; i++) {
+        const y = i * 1.2 - (nodeCount - 1) * 0.6;
+        nodes.push({ id: nodeId++, position: [layerX, y, 0] });
       }
+    });
+    
+    // Creazione delle connessioni tra i nodi
+    let startNode = 0;
+    for (let layer = 0; layer < layers.length - 1; layer++) {
+      for (let i = 0; i < layers[layer]; i++) {
+        const sourceId = startNode + i;
+        for (let j = 0; j < layers[layer + 1]; j++) {
+          const targetId = startNode + layers[layer] + j;
+          edges.push({ source: sourceId, target: targetId });
+        }
+      }
+      startNode += layers[layer];
     }
-    startNode += layers[layer];
-  }
+    
+    return { nodes, edges };
+  }, []);
   
   useFrame((state) => {
     if (modelRef.current) {
@@ -48,23 +55,30 @@ const NeuralNetworkModel = () => {
       {nodes.map((node) => (
         <mesh key={node.id} position={node.position}>
           <sphereGeometry args={[0.2, 16, 16]} />
-          <meshStandardMaterial color="#9D4EDD" emissive="#9D4EDD" emissiveIntensity={0.4} />
+          <meshStandardMaterial 
+            color="#9D4EDD" 
+            emissive="#9D4EDD" 
+            emissiveIntensity={0.4}
+            metalness={0.3}
+            roughness={0.4}
+          />
         </mesh>
       ))}
       
-      {/* Connessioni */}
+      {/* Connessioni usando Line da drei */}
       {edges.map((edge, idx) => {
-        const sourcePos = new THREE.Vector3(...nodes[edge.source].position);
-        const targetPos = new THREE.Vector3(...nodes[edge.target].position);
-        
-        // Creare una geometria per la linea
-        const points = [sourcePos, targetPos];
-        const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
+        const sourcePos = nodes[edge.source].position;
+        const targetPos = nodes[edge.target].position;
         
         return (
-          <line key={idx} geometry={lineGeometry}>
-            <lineBasicMaterial color="#4CC9F0" opacity={0.6} transparent />
-          </line>
+          <Line
+            key={idx}
+            points={[sourcePos, targetPos]}
+            color="#4CC9F0"
+            lineWidth={2}
+            transparent={true}
+            opacity={0.6}
+          />
         );
       })}
     </group>
@@ -98,11 +112,30 @@ const NeuralNetworkVisualization: React.FC = () => {
       </div>
       
       <div className="glass rounded-lg overflow-hidden h-[500px] relative z-10">
-        <Canvas camera={{ position: [0, 0, 10], fov: 50 }}>
+        <Canvas 
+          camera={{ position: [0, 0, 10], fov: 50 }}
+          gl={{ 
+            antialias: true, 
+            alpha: true,
+            powerPreference: "high-performance"
+          }}
+        >
           <ambientLight intensity={0.5} />
-          <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
+          <spotLight 
+            position={[10, 10, 10]} 
+            angle={0.15} 
+            penumbra={1} 
+            intensity={1} 
+            castShadow 
+          />
           <NeuralNetworkModel />
-          <OrbitControls enablePan={false} />
+          <OrbitControls 
+            enablePan={false}
+            enableDamping={true}
+            dampingFactor={0.05}
+            minDistance={5}
+            maxDistance={15}
+          />
           <Environment preset="city" />
         </Canvas>
         
