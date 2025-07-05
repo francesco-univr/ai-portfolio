@@ -69,7 +69,7 @@ const Timeline: React.FC = () => {
   
   return (
     <section id="timeline" className="section relative overflow-hidden py-24">
-      <div className="absolute inset-0 cyber-grid opacity-20" style={{ backgroundPosition: backgroundX }} />
+      <div className="absolute inset-0 cyber-grid opacity-20" style={{ backgroundPosition: backgroundX as unknown as string }} />
       
       <div className="mb-16 text-center">
         <motion.h2 
