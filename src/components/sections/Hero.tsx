@@ -50,6 +50,7 @@ const NeuralParticles = () => {
           count={count}
           array={positions}
           itemSize={3}
+          usage={THREE.DynamicDrawUsage}
         />
         <bufferAttribute
           attach="attributes-color"
