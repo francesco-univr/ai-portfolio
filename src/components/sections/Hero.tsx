@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Sphere, MeshDistortMaterial } from '@react-three/drei';
@@ -7,21 +7,25 @@ import * as THREE from 'three';
 const NeuralParticles = () => {
   const particlesRef = useRef<THREE.Points>(null);
   const count = 2000;
-  const positions = new Float32Array(count * 3);
-  const colors = new Float32Array(count * 3);
-  const connections = new Float32Array(count * 6);
   
-  // Generate random positions and colors for particles
-  for (let i = 0; i < count; i++) {
-    const i3 = i * 3;
-    positions[i3] = (Math.random() - 0.5) * 5;
-    positions[i3 + 1] = (Math.random() - 0.5) * 5;
-    positions[i3 + 2] = (Math.random() - 0.5) * 5;
+  const { positions, colors } = useMemo(() => {
+    const positions = new Float32Array(count * 3);
+    const colors = new Float32Array(count * 3);
     
-    colors[i3] = Math.random() * 0.3 + 0.7; // R: purple-blue
-    colors[i3 + 1] = Math.random() * 0.2; // G: low
-    colors[i3 + 2] = Math.random() * 0.5 + 0.5; // B: high
-  }
+    // Generate random positions and colors for particles
+    for (let i = 0; i < count; i++) {
+      const i3 = i * 3;
+      positions[i3] = (Math.random() - 0.5) * 5;
+      positions[i3 + 1] = (Math.random() - 0.5) * 5;
+      positions[i3 + 2] = (Math.random() - 0.5) * 5;
+      
+      colors[i3] = Math.random() * 0.3 + 0.7; // R: purple-blue
+      colors[i3 + 1] = Math.random() * 0.2; // G: low
+      colors[i3 + 2] = Math.random() * 0.5 + 0.5; // B: high
+    }
+    
+    return { positions, colors };
+  }, [count]);
   
   useFrame((state) => {
     if (!particlesRef.current) return;
@@ -43,11 +47,15 @@ const NeuralParticles = () => {
       <bufferGeometry>
         <bufferAttribute
           attach="attributes-position"
-          args={[positions, 3]}
+          count={count}
+          array={positions}
+          itemSize={3}
         />
         <bufferAttribute
           attach="attributes-color"
-          args={[colors, 3]}
+          count={count}
+          array={colors}
+          itemSize={3}
         />
       </bufferGeometry>
       <pointsMaterial
@@ -84,11 +92,26 @@ const Hero: React.FC = () => {
       
       {/* 3D Neural Network Background */}
       <div className="absolute inset-0 z-10">
-        <Canvas camera={{ position: [0, 0, 5], fov: 75 }}>
+        <Canvas 
+          camera={{ position: [0, 0, 5], fov: 75 }}
+          gl={{ 
+            antialias: true, 
+            alpha: true,
+            powerPreference: "high-performance"
+          }}
+        >
           <ambientLight intensity={0.5} />
           <directionalLight position={[10, 10, 5]} intensity={1} />
           <NeuralParticles />
-          <OrbitControls enableZoom={false} enablePan={false} enableRotate={true} autoRotate autoRotateSpeed={0.5} />
+          <OrbitControls 
+            enableZoom={false} 
+            enablePan={false} 
+            enableRotate={true} 
+            autoRotate 
+            autoRotateSpeed={0.5}
+            enableDamping={true}
+            dampingFactor={0.05}
+          />
         </Canvas>
       </div>
       
