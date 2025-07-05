@@ -60,7 +60,7 @@ const NeuralParticles = () => {
         />
       </bufferGeometry>
       <pointsMaterial
-        size={0.05}
+        size={0.06}
         vertexColors
         transparent
         opacity={0.8}
@@ -70,16 +70,27 @@ const NeuralParticles = () => {
   );
 };
 
-const AnimatedSphere = () => {
+const AnimatedSphere: React.FC = () => {
+  const sphereRef = useRef<THREE.Mesh>(null);
+
+  // gentle rotation
+  useFrame(({ clock }) => {
+    if (sphereRef.current) {
+      const t = clock.getElapsedTime();
+      sphereRef.current.rotation.y = t * 0.4;
+      sphereRef.current.rotation.x = Math.sin(t * 0.2) * 0.2;
+    }
+  });
+
   return (
-    <Sphere args={[1, 100, 100]} position={[0, 0, 0]}>
+    <Sphere ref={sphereRef} args={[1, 100, 100]} position={[0, 0, 0]}>
       <MeshDistortMaterial
         color="#9D4EDD"
         attach="material"
-        distort={0.4}
-        speed={2}
-        roughness={0.2}
-        metalness={0.8}
+        distort={0.45}
+        speed={2.5}
+        roughness={0.25}
+        metalness={0.75}
       />
     </Sphere>
   );
