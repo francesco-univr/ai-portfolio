@@ -8,8 +8,11 @@ const NeuralNetworkModel = () => {
   const modelRef = useRef<THREE.Group>(null);
   
   // Simulazione di un modello di rete neurale con sfere e connessioni
-  const nodes = [];
-  const edges = [];
+  type Node = { id: number; position: [number, number, number] };
+  type Edge = { source: number; target: number };
+
+  const nodes: Node[] = [];
+  const edges: Edge[] = [];
   const layers = [4, 8, 8, 4]; // Struttura della rete: input, hidden, hidden, output
   const layerDistance = 2;
   
@@ -56,16 +59,11 @@ const NeuralNetworkModel = () => {
       {edges.map((edge, idx) => {
         const sourcePos = new THREE.Vector3(...nodes[edge.source].position);
         const targetPos = new THREE.Vector3(...nodes[edge.target].position);
-        
-        // Creare una geometria per la linea
-        const points = [sourcePos, targetPos];
-        const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
-        
-        return (
-          <line key={idx} geometry={lineGeometry}>
-            <lineBasicMaterial color="#4CC9F0" opacity={0.6} transparent />
-          </line>
-        );
+
+        const geometry = new THREE.BufferGeometry().setFromPoints([sourcePos, targetPos]);
+        const material = new THREE.LineBasicMaterial({ color: '#4CC9F0', transparent: true, opacity: 0.6 });
+
+        return <primitive key={idx} object={new THREE.Line(geometry, material)} />;
       })}
     </group>
   );

@@ -95,7 +95,7 @@ const Timeline: React.FC = () => {
       <div className="relative">
         {/* Timeline track */}
         <div className="absolute top-32 left-0 right-0 h-1 bg-dark-surface-lighter">
-          <div className="absolute top-0 left-0 h-full bg-electric-purple" style={{ width: scrollXProgress, maxWidth: '100%' }} />
+          <div className="absolute top-0 left-0 h-full bg-electric-purple" style={{ width: scrollXProgress as unknown as string, maxWidth: '100%' }} />
         </div>
         
         {/* Scrollable container */}
