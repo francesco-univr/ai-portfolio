@@ -53,7 +53,7 @@ export const CodePlayground: React.FC = () => {
   const [code, setCode] = useState<string>(`// Write your JS here\nconsole.log('Hello world');`);
   const [result, setResult] = useState<ExecutionResult | null>(null);
   const [running, setRunning] = useState(false);
-  const editorRef = useRef<any>();
+  const editorRef = useRef<Monaco.editor.IStandaloneCodeEditor | null>(null);
 
   const runCode = useCallback(async () => {
     setRunning(true);
@@ -67,8 +67,9 @@ export const CodePlayground: React.FC = () => {
       }
       const timeMs = performance.now() - start;
       setResult({ output: String(output), timeMs });
-    } catch (err: any) {
-      setResult({ output: '', errors: err?.message ?? String(err), timeMs: 0 });
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      setResult({ output: '', errors: errorMessage, timeMs: 0 });
     } finally {
       setRunning(false);
     }
