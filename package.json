@@ -54,6 +54,14 @@
     "gsap": "^3.13.0",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.364.0",
+    "monaco-editor": "^0.44.0",
+    "@monaco-editor/react": "^4.6.0",
+    "nanoid": "^5.0.2",
+    "openai": "^4.20.0",
+    "@supabase/supabase-js": "^2.38.0",
+    "zustand": "^4.4.0",
+    "react-query": "^3.39.0",
+    "worker-loader": "^3.0.8",
     "next-themes": "^0.4.4",
     "puppeteer": "^24.11.2",
     "react": "^18.3.1",
@@ -86,6 +94,8 @@
     "tailwindcss": "v3.4.16",
     "typescript": "~5.6.2",
     "typescript-eslint": "^8.15.0",
-    "vite": "^6.0.1"
+    "vite": "^6.0.1",
+    "vite-plugin-wasm": "^3.2.0",
+    "wasm-pack": "^0.12.0"
   }
 }
