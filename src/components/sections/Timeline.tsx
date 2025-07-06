@@ -69,10 +69,7 @@ const Timeline: React.FC = () => {
   
   return (
     <section id="timeline" className="section relative overflow-hidden py-24">
-      <motion.div
-        className="absolute inset-0 cyber-grid opacity-20"
-        style={{ backgroundPosition: backgroundX }}
-      />
+      <div className="absolute inset-0 cyber-grid opacity-20" style={{ backgroundPosition: backgroundX }} />
       
       <div className="mb-16 text-center">
         <motion.h2 
@@ -98,10 +95,7 @@ const Timeline: React.FC = () => {
       <div className="relative">
         {/* Timeline track */}
         <div className="absolute top-32 left-0 right-0 h-1 bg-dark-surface-lighter">
-          <motion.div
-            className="absolute top-0 left-0 h-full bg-electric-purple"
-            style={{ width: scrollXProgress, maxWidth: '100%' }}
-          />
+          <div className="absolute top-0 left-0 h-full bg-electric-purple" style={{ width: scrollXProgress, maxWidth: '100%' }} />
         </div>
         
         {/* Scrollable container */}
