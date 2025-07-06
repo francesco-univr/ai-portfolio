@@ -4,6 +4,7 @@ module.exports = {
     browser: true,
     es2024: true,
     node: true,
+    jest: true,
   },
   parser: "@typescript-eslint/parser",
   parserOptions: {
