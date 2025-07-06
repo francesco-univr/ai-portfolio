@@ -1,0 +1,12 @@
+{
+  "functions": {
+    "api/impact-predict.ts": {
+      "runtime": "@vercel/node",
+      "maxDuration": 30
+    },
+    "api/semantic-analyze.ts": {
+      "runtime": "@vercel/node",
+      "maxDuration": 30
+    }
+  }
+}

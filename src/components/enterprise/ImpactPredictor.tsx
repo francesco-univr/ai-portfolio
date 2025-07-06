@@ -23,25 +23,28 @@ export interface ImpactPrediction {
 // Mock Prediction Service – replace with real ML inference API when available
 // ---------------------------------------------------------------------------------------------------------------------
 
-const mockPredictImpact = async (): Promise<ImpactPrediction[]> => {
-  // Simulate network latency
-  await new Promise((r) => setTimeout(r, 500));
+const callImpactApi = async (): Promise<ImpactPrediction[]> => {
+  const res = await fetch('/api/impact-predict', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      publication_velocity: 3,
+      citation_trajectory: [5, 10, 15, 20, 25, 30],
+      collaboration_network_centrality: 0.5,
+      venue_impact_factor: 2.3,
+      semantic_novelty_score: 0.7,
+      author_h_index: 12,
+      trending_keywords_overlap: 0.4
+    })
+  });
+
+  if (!res.ok) throw new Error('API request failed');
+
+  const data = await res.json();
   return [
-    {
-      label: '6 months',
-      value: Math.round(20 + Math.random() * 20),
-      confidence: 0.8
-    },
-    {
-      label: '1 year',
-      value: Math.round(50 + Math.random() * 40),
-      confidence: 0.75
-    },
-    {
-      label: '2 years',
-      value: Math.round(100 + Math.random() * 60),
-      confidence: 0.65
-    }
+    { label: '6 months', value: data.citations_6_months.value, confidence: data.citations_6_months.confidence },
+    { label: '1 year', value: data.citations_1_year.value, confidence: data.citations_1_year.confidence },
+    { label: 'Future H-index', value: data.h_index_future.value, confidence: data.h_index_future.confidence }
   ];
 };
 
@@ -58,7 +61,7 @@ export const ImpactPredictor: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await mockPredictImpact();
+      const data = await callImpactApi();
       setPredictions(data);
     } catch (err) {
       console.error(err);
